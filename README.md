@@ -67,5 +67,3 @@ The application can be deployed on:
 **Sharan Moni**
 AI Engineer | Python Developer
 
----
-# AI-Resume-Analyzer-Agent
