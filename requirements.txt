@@ -2,3 +2,5 @@ streamlit
 crewai
 PyPDF2
 python-dotenv
+litellm
+groq
