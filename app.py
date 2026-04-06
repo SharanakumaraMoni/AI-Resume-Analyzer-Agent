@@ -1,20 +1,30 @@
 import streamlit as st
-from crew_logic import run_crew
-from tools import read_pdf
+from rag.loader import load_data
+from rag.splitter import split_docs
+from rag.embeddings import get_embeddings
+from rag.vectorstore import create_vectorstore
+from rag.retriever import get_retriever
+from llm.groq_llm import load_llm
+from chains.rag_chain import create_chain
+from dotenv import load_dotenv
+load_dotenv()
 
-st.title("AI Resume Analyzer Agent 🤖")
+st.title("RAG Chatbot 🤖")
 
-uploaded_file = st.file_uploader("Upload Resume (PDF)", type=["pdf"])
-job_desc = st.text_area("Paste Job Description")
+file = st.file_uploader("Upload PDF", type="pdf")
 
-if st.button("Analyze"):
-    if uploaded_file and job_desc:
-        resume_text = read_pdf(uploaded_file)
+if file:
+    docs = load_data(file)
+    texts = split_docs(docs)
+    embeddings = get_embeddings()
+    db = create_vectorstore(texts, embeddings)
+    retriever = get_retriever(db)
+    llm = load_llm()
+    chain = create_chain(llm, retriever)
 
-        with st.spinner("Analyzing..."):
-            result = run_crew(resume_text, job_desc)
+    question = st.text_input("Ask a question about the PDF:")
 
-        st.subheader("Result")
-        st.write(result)
-    else:
-        st.warning("Please upload resume and enter job description")
+    if question:
+        with st.spinner("Generating answer..."):
+            answer = chain.invoke(question)
+        st.write("Answer:", answer)
