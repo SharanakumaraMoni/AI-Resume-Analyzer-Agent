@@ -1,5 +1,5 @@
 from PyPDF2 import PdfReader
-from langchain.schema import Document
+from langchain_core.documents import Document
 
 def load_data(file):
     pdf_reader = PdfReader(file)
